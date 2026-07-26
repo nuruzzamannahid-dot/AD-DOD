@@ -111,6 +111,9 @@
 <div class="dash">
   <h1>Team Rashid — DOD Dashboard</h1>
   <div class="subtitle">Day-over-day order tracking for Account Development team | July 2025</div>
+  <div id="data-status" style="font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:16px;background:var(--kimi-color-surface-raised);border:1px solid var(--kimi-color-border);color:var(--kimi-color-text-secondary);">
+    ⏳ Connecting to Google Sheet…
+  </div>
 
   <div class="tabs">
     <button class="tab active" onclick="switchTab('overview', this)">Overview</button>
@@ -186,23 +189,23 @@
     <div class="kpi-row" id="kam-kpis">
       <div class="kpi-card">
         <div class="kpi-label">Ahmad Asif Rashid — Total</div>
-        <div class="kpi-value">184,773</div>
-        <div class="kpi-delta up"><span class="icon-up"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.386 2.36129C11.7378 2.01198 12.3059 2.013 12.6565 2.36358L18.1949 7.90204C18.5464 8.25351 18.5464 8.82336 18.1949 9.17483C17.8434 9.52631 17.2736 9.52631 16.9221 9.17483L12.9201 5.17277V21C12.9201 21.497 12.5171 21.9 12.0201 21.9C11.523 21.9 11.1201 21.497 11.1201 21V5.16172L7.07554 9.17713C6.7228 9.52733 6.15295 9.52527 5.80275 9.17253C5.45255 8.81979 5.45461 8.24995 5.80735 7.89975L11.386 2.36129Z" fill="currentColor"/></svg></span> +5.3%</div>
+        <div class="kpi-value" id="kam-total-rashid">—</div>
+        <div class="kpi-delta neutral" id="kam-pct-rashid">loading…</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Nuruzzaman Nahid — Total</div>
-        <div class="kpi-value">184,773</div>
-        <div class="kpi-delta down"><span class="icon-down"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.386 21.6387C11.7378 21.988 12.3059 21.987 12.6565 21.6364L18.1949 16.098C18.5464 15.7465 18.5464 15.1766 18.1949 14.8252C17.8434 14.4737 17.2736 14.4737 16.9221 14.8252L12.9201 18.8272V3.00002C12.9201 2.50297 12.5171 2.10003 12.0201 2.10003C11.523 2.10003 11.1201 2.50297 11.1201 3.00002V18.8383L7.07554 14.8229C6.7228 14.4727 6.15295 14.4747 5.80275 14.8275C5.45255 15.1802 5.45461 15.7501 5.80735 16.1003L11.386 21.6387Z" fill="currentColor"/></svg></span> -1.2%</div>
+        <div class="kpi-value" id="kam-total-nahid">—</div>
+        <div class="kpi-delta neutral" id="kam-pct-nahid">loading…</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">MD Solayman Shadik — Total</div>
-        <div class="kpi-value">184,773</div>
-        <div class="kpi-delta up"><span class="icon-up"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.386 2.36129C11.7378 2.01198 12.3059 2.013 12.6565 2.36358L18.1949 7.90204C18.5464 8.25351 18.5464 8.82336 18.1949 9.17483C17.8434 9.52631 17.2736 9.52631 16.9221 9.17483L12.9201 5.17277V21C12.9201 21.497 12.5171 21.9 12.0201 21.9C11.523 21.9 11.1201 21.497 11.1201 21V5.16172L7.07554 9.17713C6.7228 9.52733 6.15295 9.52527 5.80275 9.17253C5.45255 8.81979 5.45461 8.24995 5.80735 7.89975L11.386 2.36129Z" fill="currentColor"/></svg></span> +7.8%</div>
+        <div class="kpi-value" id="kam-total-solayman">—</div>
+        <div class="kpi-delta neutral" id="kam-pct-solayman">loading…</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Team avg per KAM</div>
-        <div class="kpi-value">184,773</div>
-        <div class="kpi-delta neutral"><span class="icon-dot"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="currentColor"/></svg></span> 33.3% each</div>
+        <div class="kpi-value" id="kam-total-avg">—</div>
+        <div class="kpi-delta neutral" id="kam-pct-avg">loading…</div>
       </div>
     </div>
 
@@ -214,7 +217,7 @@
 
   <!-- MERCHANT TAB -->
   <div id="tab-merchant" class="tab-content hidden">
-    <div class="section-title">Top merchants — DOD change (Jul 25 vs Jul 24)</div>
+    <div class="section-title" id="merchant-section-title">Top merchants — DOD change</div>
     <div class="table-wrap">
       <table>
         <thead>
@@ -222,58 +225,14 @@
             <th>Merchant</th>
             <th>Category</th>
             <th>KAM</th>
-            <th>Jul 24</th>
-            <th>Jul 25</th>
+            <th id="th-prev-date">Prev</th>
+            <th id="th-curr-date">Latest</th>
             <th>Change</th>
             <th>%</th>
           </tr>
         </thead>
         <tbody id="merchant-table">
-          <tr>
-            <td><div class="merchant-name">Pickaboo.com</div><div class="merchant-cat">Various Item</div></td>
-            <td>Various Item</td>
-            <td>Ahmad Asif Rashid</td>
-            <td>128</td>
-            <td>135</td>
-            <td><span class="delta-pill up">+7</span></td>
-            <td><span class="delta-pill up">+5.5%</span></td>
-          </tr>
-          <tr>
-            <td><div class="merchant-name">The Asia Express</div><div class="merchant-cat">Various Item</div></td>
-            <td>Various Item</td>
-            <td>Ahmad Asif Rashid</td>
-            <td>109</td>
-            <td>95</td>
-            <td><span class="delta-pill down">-14</span></td>
-            <td><span class="delta-pill down">-12.8%</span></td>
-          </tr>
-          <tr>
-            <td><div class="merchant-name">Deen Fashion</div><div class="merchant-cat">Clothing</div></td>
-            <td>Clothing</td>
-            <td>Ahmad Asif Rashid</td>
-            <td>126</td>
-            <td>130</td>
-            <td><span class="delta-pill up">+4</span></td>
-            <td><span class="delta-pill up">+3.2%</span></td>
-          </tr>
-          <tr>
-            <td><div class="merchant-name">SOL BANGLADE</div><div class="merchant-cat">Book</div></td>
-            <td>Book</td>
-            <td>MD Solayman Shadik</td>
-            <td>28</td>
-            <td>32</td>
-            <td><span class="delta-pill up">+4</span></td>
-            <td><span class="delta-pill up">+14.3%</span></td>
-          </tr>
-          <tr>
-            <td><div class="merchant-name">Jaraif Internationa</div><div class="merchant-cat">Various Item</div></td>
-            <td>Various Item</td>
-            <td>Nuruzzaman Nahid</td>
-            <td>169</td>
-            <td>155</td>
-            <td><span class="delta-pill down">-14</span></td>
-            <td><span class="delta-pill down">-8.3%</span></td>
-          </tr>
+          <tr><td colspan="7" style="text-align:center;color:var(--kimi-color-text-tertiary);">Loading merchant data…</td></tr>
         </tbody>
       </table>
     </div>
@@ -297,47 +256,337 @@
 </div>
 
 <script>
-  // Daily data from the sheet (Jul 1–25)
-  var dailyData = [
-    { day: 'Jul 1', value: 22295, date: 1 },
-    { day: 'Jul 2', value: 25438, date: 2 },
-    { day: 'Jul 3', value: 20745, date: 3 },
-    { day: 'Jul 4', value: 23538, date: 4 },
-    { day: 'Jul 5', value: 23502, date: 5 },
-    { day: 'Jul 6', value: 24284, date: 6 },
-    { day: 'Jul 7', value: 24653, date: 7 },
-    { day: 'Jul 8', value: 25283, date: 8 },
-    { day: 'Jul 9', value: 25510, date: 9 },
-    { day: 'Jul 10', value: 20844, date: 10 },
-    { day: 'Jul 11', value: 24900, date: 11 },
-    { day: 'Jul 12', value: 22400, date: 12 },
-    { day: 'Jul 13', value: 23961, date: 13 },
-    { day: 'Jul 14', value: 23539, date: 14 },
-    { day: 'Jul 15', value: 22951, date: 15 },
-    { day: 'Jul 16', value: 20773, date: 16 },
-    { day: 'Jul 17', value: 18783, date: 17 },
-    { day: 'Jul 18', value: 23975, date: 18 },
-    { day: 'Jul 19', value: 21385, date: 19 },
-    { day: 'Jul 20', value: 19388, date: 20 },
-    { day: 'Jul 21', value: 20369, date: 21 },
-    { day: 'Jul 22', value: 21498, date: 22 },
-    { day: 'Jul 23', value: 20836, date: 23 },
-    { day: 'Jul 24', value: 18363, date: 24 },
-    { day: 'Jul 25', value: 21215, date: 25 }
-  ];
+  // ---------------------------------------------------------------------
+  // LIVE DATA SOURCE — published Google Sheet
+  // ---------------------------------------------------------------------
+  // The published-to-web URL only serves a JS-rendered shell, so we pull
+  // the actual values from the sheet's CSV export instead (this is the
+  // same trick used across the other Carrybee dashboards).
+  var SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTJAs1HkTr3AN2z55Pnh5qS6Ks1SrHjU_tRdxeLi77frp3H3OldoDi1A_kfEff3u0d0D0d2NLoNO_v6';
+  var SHEET_CSV_URL = SHEET_BASE + '/pub?output=csv';
 
-  // Calculate 7-day moving average and DOD
-  dailyData.forEach(function(d, i) {
-    var start = Math.max(0, i - 6);
-    var slice = dailyData.slice(start, i + 1);
-    d.avg7 = Math.round(slice.reduce(function(a, b) { return a + b.value; }, 0) / slice.length);
-    d.dod = i > 0 ? d.value - dailyData[i-1].value : 0;
-    d.dodPct = i > 0 ? ((d.value - dailyData[i-1].value) / dailyData[i-1].value * 100).toFixed(1) : 0;
-  });
-
-  var maxVal = Math.max.apply(null, dailyData.map(function(d) { return d.value; }));
-  var minVal = Math.min.apply(null, dailyData.map(function(d) { return d.value; }));
+  var dailyData = [];         // populated from the sheet once it loads
+  var realKamTotals = null;   // { name: total, ... } if the sheet has per-KAM columns
+  var maxVal, minVal;
   var padding = { top: 20, right: 30, bottom: 40, left: 50 };
+
+  // --- tiny CSV parser (handles quoted fields with embedded commas) ---
+  function parseCSV(text) {
+    var rows = [];
+    var row = [];
+    var field = '';
+    var inQuotes = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (text[i + 1] === '"') { field += '"'; i++; }
+          else { inQuotes = false; }
+        } else { field += c; }
+      } else {
+        if (c === '"') { inQuotes = true; }
+        else if (c === ',') { row.push(field); field = ''; }
+        else if (c === '\r') { /* skip */ }
+        else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+        else { field += c; }
+      }
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    return rows.filter(function(r) { return r.length && r.some(function(v) { return v.trim() !== ''; }); });
+  }
+
+  function findCol(headers, candidates) {
+    for (var i = 0; i < headers.length; i++) {
+      var h = headers[i].toLowerCase().trim();
+      for (var j = 0; j < candidates.length; j++) {
+        if (h.indexOf(candidates[j]) !== -1) return i;
+      }
+    }
+    return -1;
+  }
+
+  function num(v) {
+    if (v == null) return NaN;
+    var n = parseFloat(String(v).replace(/,/g, '').trim());
+    return n;
+  }
+
+  function setStatus(msg, isError) {
+    var el = document.getElementById('data-status');
+    if (!el) return;
+    el.textContent = msg;
+    el.style.color = isError ? 'var(--kimi-color-danger)' : 'var(--kimi-color-positive)';
+  }
+
+  // Calculate 7-day moving average and DOD on whatever dailyData we end up with
+  function computeDerived() {
+    dailyData.forEach(function(d, i) {
+      var start = Math.max(0, i - 6);
+      var slice = dailyData.slice(start, i + 1);
+      d.avg7 = Math.round(slice.reduce(function(a, b) { return a + b.value; }, 0) / slice.length);
+      d.dod = i > 0 ? d.value - dailyData[i - 1].value : 0;
+      d.dodPct = i > 0 ? ((d.value - dailyData[i - 1].value) / dailyData[i - 1].value * 100).toFixed(1) : 0;
+    });
+    maxVal = Math.max.apply(null, dailyData.map(function(d) { return d.value; }));
+    minVal = Math.min.apply(null, dailyData.map(function(d) { return d.value; }));
+  }
+
+  function updateKPIs() {
+    if (!dailyData.length) return;
+    var total = dailyData.reduce(function(a, b) { return a + b.value; }, 0);
+    var avg = Math.round(total / dailyData.length);
+    var best = dailyData.reduce(function(a, b) { return b.value > a.value ? b : a; }, dailyData[0]);
+
+    var totalEl = document.getElementById('kpi-total');
+    if (totalEl) totalEl.textContent = total.toLocaleString();
+    var avgEl = document.getElementById('kpi-avg');
+    if (avgEl) avgEl.textContent = avg.toLocaleString();
+
+    var bestCard = document.querySelectorAll('.kpi-card')[2];
+    if (bestCard) {
+      var bestVal = bestCard.querySelector('.kpi-value');
+      var bestDelta = bestCard.querySelector('.kpi-delta');
+      if (bestVal) bestVal.textContent = best.day;
+      if (bestDelta) bestDelta.lastChild.textContent = ' ' + best.value.toLocaleString() + ' orders';
+    }
+  }
+
+  function updateKamKpis() {
+    var total = dailyData.reduce(function(a, b) { return a + b.value; }, 0);
+    var rashid, nahid, solayman, isReal;
+    if (realKamTotals) {
+      rashid = realKamTotals.rashid; nahid = realKamTotals.nahid; solayman = realKamTotals.solayman;
+      isReal = true;
+    } else {
+      rashid = nahid = solayman = Math.round(total / 3);
+      isReal = false;
+    }
+    var set = function(id, val) { var el = document.getElementById(id); if (el) el.textContent = Math.round(val).toLocaleString(); };
+    set('kam-total-rashid', rashid);
+    set('kam-total-nahid', nahid);
+    set('kam-total-solayman', solayman);
+    set('kam-total-avg', total / 3);
+
+    var pctLabel = function(id, val) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var pct = total ? (val / total * 100).toFixed(1) : 0;
+      el.textContent = pct + '% of total' + (isReal ? '' : ' (even split — sheet has no per-KAM columns)');
+      el.className = 'kpi-delta neutral';
+    };
+    pctLabel('kam-pct-rashid', rashid);
+    pctLabel('kam-pct-nahid', nahid);
+    pctLabel('kam-pct-solayman', solayman);
+    var avgEl = document.getElementById('kam-pct-avg');
+    if (avgEl) avgEl.textContent = '33.3% each';
+  }
+
+  function renderAll() {
+    computeDerived();
+    updateKPIs();
+    updateKamKpis();
+    drawLineChart('trend-chart', dailyData, true);
+    drawBarChart('wow-chart', dailyData);
+    drawKAMChart();
+    // Redraw trend-tab charts too if that tab has already been visited
+    if (document.getElementById('tab-trend') && !document.getElementById('tab-trend').classList.contains('hidden')) {
+      drawFullTrend();
+      drawHeatmap();
+    }
+  }
+
+  function parseDateSort(raw, fallbackIndex) {
+    var d = new Date(raw);
+    if (!isNaN(d.getTime())) return d.getTime();
+    return 1e15 + fallbackIndex; // unparsable dates: keep original sheet order
+  }
+
+  function matchKamKey(name) {
+    var n = (name || '').toLowerCase();
+    if (n.indexOf('rashid') !== -1) return 'rashid';
+    if (n.indexOf('nahid') !== -1) return 'nahid';
+    if (n.indexOf('solayman') !== -1) return 'solayman';
+    return null;
+  }
+
+  function renderMerchantTable() {
+    var tbody = document.getElementById('merchant-table');
+    if (!tbody) return;
+    if (!window.merchantRows || !window.merchantRows.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--kimi-color-text-tertiary);">No merchant-level data found in this sheet (no merchant name column detected).</td></tr>';
+      return;
+    }
+    var prevLabel = window.merchantDates ? window.merchantDates.prev : 'Prev';
+    var currLabel = window.merchantDates ? window.merchantDates.curr : 'Latest';
+    var thPrev = document.getElementById('th-prev-date'); if (thPrev) thPrev.textContent = prevLabel;
+    var thCurr = document.getElementById('th-curr-date'); if (thCurr) thCurr.textContent = currLabel;
+    var titleEl = document.getElementById('merchant-section-title');
+    if (titleEl) titleEl.textContent = 'Top merchants — DOD change (' + currLabel + ' vs ' + prevLabel + ')';
+
+    var rows = window.merchantRows.slice(0, 25);
+    var html = rows.map(function(r) {
+      var dirClass = r.change > 0 ? 'up' : (r.change < 0 ? 'down' : 'neutral');
+      var pctStr = (r.change > 0 ? '+' : '') + r.pct.toFixed(1) + '%';
+      var changeStr = (r.change > 0 ? '+' : '') + r.change;
+      return '<tr>' +
+        '<td><div class="merchant-name">' + r.name + '</div><div class="merchant-cat">' + (r.category || '') + '</div></td>' +
+        '<td>' + (r.category || '—') + '</td>' +
+        '<td>' + (r.kam || '—') + '</td>' +
+        '<td>' + r.prev.toLocaleString() + '</td>' +
+        '<td>' + r.curr.toLocaleString() + '</td>' +
+        '<td><span class="delta-pill ' + dirClass + '">' + changeStr + '</span></td>' +
+        '<td><span class="delta-pill ' + dirClass + '">' + pctStr + '</span></td>' +
+        '</tr>';
+    }).join('');
+    tbody.innerHTML = html;
+
+    // Inactive merchants KPI (4th overview card): merchants that had orders before, zero now
+    var inactive = window.merchantRows.filter(function(r) { return r.curr === 0 && r.prev > 0; });
+    var overviewCards = document.querySelectorAll('#tab-overview .kpi-card');
+    var inactiveCard = overviewCards[3];
+    if (inactiveCard) {
+      var v = inactiveCard.querySelector('.kpi-value');
+      var d = inactiveCard.querySelector('.kpi-delta');
+      if (v) v.textContent = inactive.length;
+      if (d) d.lastChild.textContent = ' ' + inactive.reduce(function(a, b) { return a + b.prev; }, 0).toLocaleString() + ' orders lost';
+    }
+  }
+
+  function loadSheetData() {
+    fetch(SHEET_CSV_URL)
+      .then(function(res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.text();
+      })
+      .then(function(text) {
+        var rows = parseCSV(text);
+        if (rows.length < 2) throw new Error('Sheet returned no data rows');
+
+        var headers = rows[0];
+        var dateCol = findCol(headers, ['date', 'day']);
+        var kamCol = findCol(headers, ['kam']);
+        var merchantCol = findCol(headers, ['merchant', 'shop', 'store', 'client']);
+        var categoryCol = findCol(headers, ['categ', 'type']);
+        var orderCol = findCol(headers, ['order', 'sales', 'qty', 'count', 'total', 'value']);
+
+        if (dateCol === -1 || orderCol === -1) {
+          throw new Error('Could not find date/orders columns in headers: ' + headers.join(', '));
+        }
+
+        var dateMap = {};      // dateKey -> { total, sortVal, firstSeen }
+        var kamByDate = {};    // dateKey -> { rashid, nahid, solayman }
+        var kamTotals = { rashid: 0, nahid: 0, solayman: 0 };
+        var anyKamMatched = false;
+        var merchantByDate = {}; // dateKey -> { merchantName: { value, category, kam } }
+        var order = 0;
+
+        for (var i = 1; i < rows.length; i++) {
+          var r = rows[i];
+          var rawDate = r[dateCol];
+          var val = num(r[orderCol]);
+          if (rawDate == null || rawDate.trim() === '' || isNaN(val)) continue;
+          var dateKey = rawDate.trim();
+
+          if (!dateMap[dateKey]) {
+            dateMap[dateKey] = { total: 0, sortVal: parseDateSort(dateKey, order), firstSeen: order };
+            order++;
+          }
+          dateMap[dateKey].total += val;
+
+          if (kamCol !== -1) {
+            var kamName = (r[kamCol] || '').trim();
+            var key = matchKamKey(kamName);
+            if (key) {
+              anyKamMatched = true;
+              kamTotals[key] += val;
+              if (!kamByDate[dateKey]) kamByDate[dateKey] = { rashid: 0, nahid: 0, solayman: 0 };
+              kamByDate[dateKey][key] += val;
+            }
+          }
+
+          if (merchantCol !== -1) {
+            var mName = (r[merchantCol] || '').trim();
+            if (mName) {
+              if (!merchantByDate[dateKey]) merchantByDate[dateKey] = {};
+              var cat = categoryCol !== -1 ? (r[categoryCol] || '').trim() : '';
+              var kamLabel = kamCol !== -1 ? (r[kamCol] || '').trim() : '';
+              if (!merchantByDate[dateKey][mName]) merchantByDate[dateKey][mName] = { value: 0, category: cat, kam: kamLabel };
+              merchantByDate[dateKey][mName].value += val;
+            }
+          }
+        }
+
+        var dateKeys = Object.keys(dateMap);
+        if (!dateKeys.length) throw new Error('No valid rows parsed from sheet');
+        dateKeys.sort(function(a, b) { return dateMap[a].sortVal - dateMap[b].sortVal; });
+
+        dailyData = dateKeys.map(function(k, i) {
+          return { day: k, value: Math.round(dateMap[k].total), date: i + 1 };
+        });
+
+        if (anyKamMatched) {
+          realKamTotals = kamTotals;
+          window.realKamDaily = dateKeys.map(function(k) {
+            var d = kamByDate[k] || { rashid: 0, nahid: 0, solayman: 0 };
+            return { a: d.rashid, b: d.nahid, c: d.solayman };
+          });
+        } else {
+          realKamTotals = null;
+          window.realKamDaily = null;
+        }
+
+        window.merchantRows = null;
+        window.merchantDates = null;
+        if (merchantCol !== -1 && dateKeys.length >= 1) {
+          var currKey = dateKeys[dateKeys.length - 1];
+          var prevKey = dateKeys.length >= 2 ? dateKeys[dateKeys.length - 2] : null;
+          var currData = merchantByDate[currKey] || {};
+          var prevData = prevKey ? (merchantByDate[prevKey] || {}) : {};
+          var names = {};
+          Object.keys(currData).forEach(function(m) { names[m] = true; });
+          Object.keys(prevData).forEach(function(m) { names[m] = true; });
+          var list = [];
+          Object.keys(names).forEach(function(m) {
+            var curr = currData[m] ? currData[m].value : 0;
+            var prev = prevData[m] ? prevData[m].value : 0;
+            var category = (currData[m] && currData[m].category) || (prevData[m] && prevData[m].category) || '';
+            var kamLabel = (currData[m] && currData[m].kam) || (prevData[m] && prevData[m].kam) || '';
+            var change = curr - prev;
+            var pct = prev ? (change / prev * 100) : (curr > 0 ? 100 : 0);
+            list.push({ name: m, category: category, kam: kamLabel, prev: prev, curr: curr, change: change, pct: pct });
+          });
+          list.sort(function(a, b) { return Math.abs(b.change) - Math.abs(a.change); });
+          window.merchantRows = list;
+          window.merchantDates = { prev: prevKey || currKey, curr: currKey };
+        }
+
+        setStatus('✅ Live data loaded from Google Sheet — ' + dateKeys.length + ' dates, ' + (rows.length - 1) + ' rows' + (anyKamMatched ? ', per-KAM breakdown found' : '') + (merchantCol !== -1 ? ', merchant-level data found' : ''), false);
+        renderAll();
+        renderMerchantTable();
+      })
+      .catch(function(err) {
+        console.error('Sheet fetch failed:', err);
+        setStatus('⚠️ Could not load live sheet data (' + err.message + '). Showing last-known sample data — check the sheet is published ("File → Share → Publish to web") and open this file over http(s), not double-clicked from disk, if your browser blocks the request.', true);
+        // Fallback sample so the dashboard still renders something
+        dailyData = [
+          { day: 'Jul 1', value: 22295, date: 1 }, { day: 'Jul 2', value: 25438, date: 2 },
+          { day: 'Jul 3', value: 20745, date: 3 }, { day: 'Jul 4', value: 23538, date: 4 },
+          { day: 'Jul 5', value: 23502, date: 5 }, { day: 'Jul 6', value: 24284, date: 6 },
+          { day: 'Jul 7', value: 24653, date: 7 }, { day: 'Jul 8', value: 25283, date: 8 },
+          { day: 'Jul 9', value: 25510, date: 9 }, { day: 'Jul 10', value: 20844, date: 10 },
+          { day: 'Jul 11', value: 24900, date: 11 }, { day: 'Jul 12', value: 22400, date: 12 },
+          { day: 'Jul 13', value: 23961, date: 13 }, { day: 'Jul 14', value: 23539, date: 14 },
+          { day: 'Jul 15', value: 22951, date: 15 }, { day: 'Jul 16', value: 20773, date: 16 },
+          { day: 'Jul 17', value: 18783, date: 17 }, { day: 'Jul 18', value: 23975, date: 18 },
+          { day: 'Jul 19', value: 21385, date: 19 }, { day: 'Jul 20', value: 19388, date: 20 },
+          { day: 'Jul 21', value: 20369, date: 21 }, { day: 'Jul 22', value: 21498, date: 22 },
+          { day: 'Jul 23', value: 20836, date: 23 }, { day: 'Jul 24', value: 18363, date: 24 },
+          { day: 'Jul 25', value: 21215, date: 25 }
+        ];
+        renderAll();
+        renderMerchantTable();
+      });
+  }
 
   function drawLineChart(svgId, data, showAvg) {
     var svg = document.getElementById(svgId);
@@ -445,14 +694,19 @@
 
     var kamNames = ['Ahmad Asif Rashid', 'Nuruzzaman Nahid', 'MD Solayman Shadik'];
     var colors = ['var(--kimi-chart-1)', 'var(--kimi-chart-2)', 'var(--kimi-chart-3)'];
-    var kamData = dailyData.map(function(d, i) {
-      return {
-        day: d.day,
-        a: Math.round(d.value * 0.34 + Math.sin(i * 0.5) * 800),
-        b: Math.round(d.value * 0.33 + Math.cos(i * 0.7) * 600),
-        c: d.value - Math.round(d.value * 0.34 + Math.sin(i * 0.5) * 800) - Math.round(d.value * 0.33 + Math.cos(i * 0.7) * 600)
-      };
-    });
+    var kamData;
+    if (window.realKamDaily && window.realKamDaily.length === dailyData.length) {
+      // Real per-KAM columns found in the sheet — use them directly
+      kamData = dailyData.map(function(d, i) {
+        return { day: d.day, a: window.realKamDaily[i].a, b: window.realKamDaily[i].b, c: window.realKamDaily[i].c };
+      });
+    } else {
+      // No per-KAM columns in the sheet — even 3-way split as a placeholder
+      kamData = dailyData.map(function(d) {
+        var third = Math.round(d.value / 3);
+        return { day: d.day, a: third, b: third, c: d.value - 2 * third };
+      });
+    }
 
     var allVals = [];
     kamData.forEach(function(d) { allVals.push(d.a, d.b, d.c); });
@@ -627,11 +881,9 @@
     btn.classList.add('active');
   }
 
-  // Initialize charts on page load
+  // Initialize: pull live data from the Google Sheet, then draw charts
   document.addEventListener('DOMContentLoaded', function() {
-    drawLineChart('trend-chart', dailyData, true);
-    drawBarChart('wow-chart', dailyData);
-    drawKAMChart();
+    loadSheetData();
   });
 </script>
 
