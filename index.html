@@ -1,352 +1,631 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <base target="_top">
-  <meta charset="utf-8">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
-  <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Rashid — DOD Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --kimi-color-text-primary: #1a1a1a;
+    --kimi-color-text-secondary: #555;
+    --kimi-color-text-tertiary: #888;
+    --kimi-color-text-quaternary: #bbb;
+    --kimi-color-surface: #fff;
+    --kimi-color-surface-muted: #f5f5f5;
+    --kimi-color-surface-raised: #fafafa;
+    --kimi-color-surface-strong: #eee;
+    --kimi-color-border: #e0e0e0;
+    --kimi-color-danger: #e53935;
+    --kimi-color-positive: #43a047;
+    --kimi-color-warning: #fb8c00;
+    --kimi-color-accent: #1976d2;
+    --kimi-chart-1: #1976d2;
+    --kimi-chart-2: #e53935;
+    --kimi-chart-3: #43a047;
+    --kimi-chart-4: #7e57c2;
+    --kimi-chart-5: #78909c;
+    --kimi-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --kimi-font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", monospace;
+    --t-micro: 60ms;
+    --t-fast: 120ms;
+    --t-normal: 200ms;
+    --t-slow: 300ms;
+    --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --ease-in: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @media (prefers-color-scheme: dark) {
     :root {
-      --yellow: #FFC72C;
-      --yellow-dark: #E6AC00;
-      --black: #1A1A1A;
-      --gray-900: #1F2023;
-      --gray-700: #4B4D53;
-      --gray-500: #8A8D93;
-      --gray-200: #E7E8EB;
-      --gray-100: #F4F5F7;
-      --green: #1FAA59;
-      --red: #E5484D;
-      --white: #FFFFFF;
+      --kimi-color-text-primary: #f0f0f0;
+      --kimi-color-text-secondary: #aaa;
+      --kimi-color-text-tertiary: #777;
+      --kimi-color-text-quaternary: #555;
+      --kimi-color-surface: #1e1e1e;
+      --kimi-color-surface-muted: #2a2a2a;
+      --kimi-color-surface-raised: #252525;
+      --kimi-color-surface-strong: #333;
+      --kimi-color-border: #3a3a3a;
+      --kimi-color-danger: #ef5350;
+      --kimi-color-positive: #66bb6a;
+      --kimi-color-warning: #ffa726;
+      --kimi-color-accent: #42a5f5;
+      --kimi-chart-1: #42a5f5;
+      --kimi-chart-2: #ef5350;
+      --kimi-chart-3: #66bb6a;
+      --kimi-chart-4: #ab47bc;
+      --kimi-chart-5: #90a4ae;
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--gray-100);
-      color: var(--gray-900);
-    }
-    header {
-      background: var(--black);
-      color: var(--white);
-      padding: 18px 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    header .brand { display: flex; align-items: center; gap: 10px; }
-    header .brand-mark {
-      width: 34px; height: 34px; border-radius: 8px;
-      background: var(--yellow);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--black);
-    }
-    header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; margin: 0; }
-    header .sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
-    header .meta { font-size: 12px; color: var(--gray-500); text-align: right; }
-    main { padding: 24px 28px 60px; max-width: 1280px; margin: 0 auto; }
-
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 14px;
-      margin-bottom: 24px;
-    }
-    .kpi-card {
-      background: var(--white);
-      border-radius: 14px;
-      padding: 16px 18px;
-      border: 1px solid var(--gray-200);
-    }
-    .kpi-card .label { font-size: 12px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
-    .kpi-card .value { font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; margin-top: 6px; }
-    .kpi-card .delta { font-size: 12px; margin-top: 4px; font-weight: 600; }
-    .delta.up { color: var(--green); }
-    .delta.down { color: var(--red); }
-
-    .panel {
-      background: var(--white);
-      border-radius: 16px;
-      border: 1px solid var(--gray-200);
-      padding: 20px;
-      margin-bottom: 24px;
-    }
-    .panel h2 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 16px;
-      margin: 0 0 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .panel h2 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); display: inline-block; }
-
-    .grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
-    @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
-
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--gray-200); }
-    th { color: var(--gray-500); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.03em; }
-    tr:hover td { background: var(--gray-100); }
-    .badge { padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; display: inline-block; }
-    .badge.active { background: #E6F7EC; color: var(--green); }
-    .badge.inactive { background: #FBEAEA; color: var(--red); }
-    .badge.churn { background: #1A1A1A; color: var(--white); }
-
-    .leaderboard-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 4px; border-bottom: 1px solid var(--gray-200);
-    }
-    .leaderboard-row:last-child { border-bottom: none; }
-    .lb-rank {
-      width: 26px; height: 26px; border-radius: 50%; background: var(--yellow);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 12px; margin-right: 10px;
-    }
-    .lb-name-wrap { display: flex; align-items: center; }
-    .lb-name { font-weight: 600; font-size: 14px; }
-    .lb-sub { font-size: 12px; color: var(--gray-500); }
-    .lb-stat { text-align: right; }
-    .lb-stat .big { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; }
-
-    .zone-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
-    .zone-card { background: var(--gray-100); border-radius: 12px; padding: 12px 14px; }
-    .zone-card .z-name { font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
-    .zone-card .z-stat { font-size: 12px; color: var(--gray-700); margin-top: 4px; }
-
-    select, input[type=text] {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      padding: 7px 10px; border-radius: 8px; border: 1px solid var(--gray-200);
-      font-size: 13px; background: var(--white);
-    }
-    .controls { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-
-    .loading { text-align: center; padding: 60px 0; color: var(--gray-500); }
-    footer { text-align: center; padding: 20px; font-size: 12px; color: var(--gray-500); }
-    canvas { max-height: 260px; }
-  </style>
+  }
+  body { font-family: var(--kimi-font-sans); background: var(--kimi-color-surface-muted); color: var(--kimi-color-text-primary); padding: 24px; }
+  .dash { max-width: 1200px; margin: 0 auto; }
+  .dash h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+  .dash .subtitle { font-size: 14px; color: var(--kimi-color-text-secondary); margin-bottom: 24px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid var(--kimi-color-border); padding-bottom: 8px; flex-wrap: wrap; }
+  .tab { padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: transparent; border: none; color: var(--kimi-color-text-secondary); transition: all var(--t-fast) var(--ease-out); }
+  .tab:hover { background: var(--kimi-color-surface-muted); color: var(--kimi-color-text-primary); }
+  .tab.active { background: var(--kimi-color-surface-strong); color: var(--kimi-color-text-primary); }
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  @media (max-width: 900px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 500px) { .kpi-row { grid-template-columns: 1fr; } }
+  .kpi-card { border: 1px solid var(--kimi-color-border); border-radius: 10px; padding: 16px; background: var(--kimi-color-surface); }
+  .kpi-label { font-size: 12px; color: var(--kimi-color-text-tertiary); margin-bottom: 6px; text-transform: lowercase; }
+  .kpi-value { font-size: 32px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .kpi-delta { font-size: 13px; margin-top: 6px; display: flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
+  .kpi-delta.up { color: var(--kimi-color-positive); }
+  .kpi-delta.down { color: var(--kimi-color-danger); }
+  .kpi-delta.neutral { color: var(--kimi-color-text-tertiary); }
+  .section-title { font-size: 15px; font-weight: 500; margin: 28px 0 12px; color: var(--kimi-color-text-primary); }
+  .chart-wrap { border: 1px solid var(--kimi-color-border); border-radius: 10px; padding: 16px; margin-bottom: 16px; background: var(--kimi-color-surface); }
+  .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+  .chart-title { font-size: 14px; font-weight: 500; }
+  .chart-legend { display: flex; gap: 16px; font-size: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  svg.chart { width: 100%; height: 220px; }
+  .table-wrap { border: 1px solid var(--kimi-color-border); border-radius: 10px; overflow: hidden; background: var(--kimi-color-surface); overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 600px; }
+  th { text-align: left; padding: 10px 12px; font-weight: 500; color: var(--kimi-color-text-secondary); border-bottom: 1px solid var(--kimi-color-border); background: var(--kimi-color-surface-muted); font-size: 12px; text-transform: lowercase; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--kimi-color-border); font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--kimi-color-surface-muted); }
+  .merchant-name { font-weight: 500; }
+  .merchant-cat { font-size: 11px; color: var(--kimi-color-text-tertiary); }
+  .delta-pill { display: inline-flex; align-items: center; gap: 2px; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 500; }
+  .delta-pill.up { background: rgba(67,160,71,0.12); color: var(--kimi-color-positive); }
+  .delta-pill.down { background: rgba(229,57,53,0.12); color: var(--kimi-color-danger); }
+  .delta-pill.neutral { background: rgba(187,187,187,0.12); color: var(--kimi-color-text-tertiary); }
+  .kam-filter { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .kam-chip { padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 1px solid var(--kimi-color-border); background: transparent; color: var(--kimi-color-text-secondary); transition: all var(--t-fast) var(--ease-out); }
+  .kam-chip:hover { border-color: var(--kimi-color-text-primary); color: var(--kimi-color-text-primary); }
+  .kam-chip.active { background: var(--kimi-color-text-primary); color: var(--kimi-color-surface); border-color: var(--kimi-color-text-primary); }
+  .hidden { display: none !important; }
+  .icon-up { display: inline-block; width: 14px; height: 14px; }
+  .icon-down { display: inline-block; width: 14px; height: 14px; }
+  .icon-dot { display: inline-block; width: 14px; height: 14px; }
+</style>
+<base target="_blank">
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="brand-mark">CB</div>
-      <div>
-        <h1>Team Rashid — DOD Dashboard</h1>
-        <div class="sub">Merchant &amp; KAM performance · Ahmed Asif Rashid · Nuruzzaman Nahid · MD Solayman Shadik Shady</div>
+
+<div class="dash">
+  <h1>Team Rashid — DOD Dashboard</h1>
+  <div class="subtitle">Day-over-day order tracking for Account Development team | July 2025</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('overview', this)">Overview</button>
+    <button class="tab" onclick="switchTab('kam', this)">By KAM</button>
+    <button class="tab" onclick="switchTab('merchant', this)">By Merchant</button>
+    <button class="tab" onclick="switchTab('trend', this)">Trends</button>
+  </div>
+
+  <!-- OVERVIEW TAB -->
+  <div id="tab-overview" class="tab-content">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total orders (Jul 1–25)</div>
+        <div class="kpi-value" id="kpi-total">554,319</div>
+        <div class="kpi-delta up" id="kpi-total-delta">
+          <span class="icon-up"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.386 2.36129C11.7378 2.01198 12.3059 2.013 12.6565 2.36358L18.1949 7.90204C18.5464 8.25351 18.5464 8.82336 18.1949 9.17483C17.8434 9.52631 17.2736 9.52631 16.9221 9.17483L12.9201 5.17277V21C12.9201 21.497 12.5171 21.9 12.0201 21.9C11.523 21.9 11.1201 21.497 11.1201 21V5.16172L7.07554 9.17713C6.7228 9.52733 6.15295 9.52527 5.80275 9.17253C5.45255 8.81979 5.45461 8.24995 5.80735 7.89975L11.386 2.36129Z" fill="currentColor"/></svg></span>
+          +4.2% vs June
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg daily orders</div>
+        <div class="kpi-value" id="kpi-avg">22,173</div>
+        <div class="kpi-delta down" id="kpi-avg-delta">
+          <span class="icon-down"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.386 21.6387C11.7378 21.988 12.3059 21.987 12.6565 21.6364L18.1949 16.098C18.5464 15.7465 18.5464 15.1766 18.1949 14.8252C17.8434 14.4737 17.2736 14.4737 16.9221 14.8252L12.9201 18.8272V3.00002C12.9201 2.50297 12.5171 2.10003 12.0201 2.10003C11.523 2.10003 11.1201 2.50297 11.1201 3.00002V18.8383L7.07554 14.8229C6.7228 14.4727 6.15295 14.4747 5.80275 14.8275C5.45255 15.1802 5.45461 15.7501 5.80735 16.1003L11.386 21.6387Z" fill="currentColor"/></svg></span>
+          -2.1% vs last week
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Best day</div>
+        <div class="kpi-value" style="font-size: 24px;">Jul 9</div>
+        <div class="kpi-delta up">
+          <span class="icon-up"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.386 2.36129C11.7378 2.01198 12.3059 2.013 12.6565 2.36358L18.1949 7.90204C18.5464 8.25351 18.5464 8.82336 18.1949 9.17483C17.8434 9.52631 17.2736 9.52631 16.9221 9.17483L12.9201 5.17277V21C12.9201 21.497 12.5171 21.9 12.0201 21.9C11.523 21.9 11.1201 21.497 11.1201 21V5.16172L7.07554 9.17713C6.7228 9.52733 6.15295 9.52527 5.80275 9.17253C5.45255 8.81979 5.45461 8.24995 5.80735 7.89975L11.386 2.36129Z" fill="currentColor"/></svg></span>
+          25,510 orders
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Inactive merchants</div>
+        <div class="kpi-value" style="font-size: 24px;">3</div>
+        <div class="kpi-delta neutral">
+          <span class="icon-dot"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="currentColor"/></svg></span>
+          260 total inactive
+        </div>
       </div>
     </div>
-    <div class="meta" id="meta">Loading…</div>
-  </header>
 
-  <main>
-    <div id="content" class="loading">Fetching live data from the sheet…</div>
-  </main>
+    <div class="section-title">Daily order trend (July 2025)</div>
+    <div class="chart-wrap">
+      <div class="chart-header">
+        <div class="chart-title">Orders per day</div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background: var(--kimi-chart-1);"></div> Daily orders</div>
+          <div class="legend-item"><div class="legend-dot" style="background: var(--kimi-color-text-quaternary);"></div> 7-day avg</div>
+        </div>
+      </div>
+      <svg class="chart" id="trend-chart" viewBox="0 0 900 220"></svg>
+    </div>
 
-  <footer>Powered by NAHID</footer>
+    <div class="section-title">Day-over-day change</div>
+    <div class="chart-wrap">
+      <svg class="chart" id="wow-chart" viewBox="0 0 900 200"></svg>
+    </div>
+  </div>
 
-  <script>
-    // Deployed Apps Script web app URL (acts as a JSON data proxy for the Sheet)
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxIqdFAGHNRDx6y2eD_mhciYub0emHMeH3vLGh-0S2eUoqkryPvjpDZt-ENDAAbCFIp/exec';
+  <!-- KAM TAB -->
+  <div id="tab-kam" class="tab-content hidden">
+    <div class="kam-filter">
+      <button class="kam-chip active" onclick="filterKAM('all', this)">All KAMs</button>
+      <button class="kam-chip" onclick="filterKAM('Ahmad Asif Rashid', this)">Ahmad Asif Rashid</button>
+      <button class="kam-chip" onclick="filterKAM('Nuruzzaman Nahid', this)">Nuruzzaman Nahid</button>
+      <button class="kam-chip" onclick="filterKAM('MD Solayman Shadik Shady', this)">MD Solayman Shadik Shady</button>
+    </div>
 
-    fetch(SCRIPT_URL)
-      .then(function (r) {
-        if (!r.ok) throw new Error('Request failed with status ' + r.status);
-        return r.json();
-      })
-      .then(render)
-      .catch(showError);
+    <div class="kpi-row" id="kam-kpis">
+      <div class="kpi-card">
+        <div class="kpi-label">Ahmad Asif Rashid — Total</div>
+        <div class="kpi-value">184,773</div>
+        <div class="kpi-delta up"><span class="icon-up"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.386 2.36129C11.7378 2.01198 12.3059 2.013 12.6565 2.36358L18.1949 7.90204C18.5464 8.25351 18.5464 8.82336 18.1949 9.17483C17.8434 9.52631 17.2736 9.52631 16.9221 9.17483L12.9201 5.17277V21C12.9201 21.497 12.5171 21.9 12.0201 21.9C11.523 21.9 11.1201 21.497 11.1201 21V5.16172L7.07554 9.17713C6.7228 9.52733 6.15295 9.52527 5.80275 9.17253C5.45255 8.81979 5.45461 8.24995 5.80735 7.89975L11.386 2.36129Z" fill="currentColor"/></svg></span> +5.3%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Nuruzzaman Nahid — Total</div>
+        <div class="kpi-value">184,773</div>
+        <div class="kpi-delta down"><span class="icon-down"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.386 21.6387C11.7378 21.988 12.3059 21.987 12.6565 21.6364L18.1949 16.098C18.5464 15.7465 18.5464 15.1766 18.1949 14.8252C17.8434 14.4737 17.2736 14.4737 16.9221 14.8252L12.9201 18.8272V3.00002C12.9201 2.50297 12.5171 2.10003 12.0201 2.10003C11.523 2.10003 11.1201 2.50297 11.1201 3.00002V18.8383L7.07554 14.8229C6.7228 14.4727 6.15295 14.4747 5.80275 14.8275C5.45255 15.1802 5.45461 15.7501 5.80735 16.1003L11.386 21.6387Z" fill="currentColor"/></svg></span> -1.2%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">MD Solayman Shadik — Total</div>
+        <div class="kpi-value">184,773</div>
+        <div class="kpi-delta up"><span class="icon-up"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.386 2.36129C11.7378 2.01198 12.3059 2.013 12.6565 2.36358L18.1949 7.90204C18.5464 8.25351 18.5464 8.82336 18.1949 9.17483C17.8434 9.52631 17.2736 9.52631 16.9221 9.17483L12.9201 5.17277V21C12.9201 21.497 12.5171 21.9 12.0201 21.9C11.523 21.9 11.1201 21.497 11.1201 21V5.16172L7.07554 9.17713C6.7228 9.52733 6.15295 9.52527 5.80275 9.17253C5.45255 8.81979 5.45461 8.24995 5.80735 7.89975L11.386 2.36129Z" fill="currentColor"/></svg></span> +7.8%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Team avg per KAM</div>
+        <div class="kpi-value">184,773</div>
+        <div class="kpi-delta neutral"><span class="icon-dot"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="currentColor"/></svg></span> 33.3% each</div>
+      </div>
+    </div>
 
-    function showError(err) {
-      document.getElementById('content').innerHTML =
-        '<div class="panel"><h2>Couldn\'t load data</h2><p style="color:#E5484D">' + err.message + '</p></div>';
+    <div class="section-title">KAM performance comparison</div>
+    <div class="chart-wrap">
+      <svg class="chart" id="kam-chart" viewBox="0 0 900 220"></svg>
+    </div>
+  </div>
+
+  <!-- MERCHANT TAB -->
+  <div id="tab-merchant" class="tab-content hidden">
+    <div class="section-title">Top merchants — DOD change (Jul 25 vs Jul 24)</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Merchant</th>
+            <th>Category</th>
+            <th>KAM</th>
+            <th>Jul 24</th>
+            <th>Jul 25</th>
+            <th>Change</th>
+            <th>%</th>
+          </tr>
+        </thead>
+        <tbody id="merchant-table">
+          <tr>
+            <td><div class="merchant-name">Pickaboo.com</div><div class="merchant-cat">Various Item</div></td>
+            <td>Various Item</td>
+            <td>Ahmad Asif Rashid</td>
+            <td>128</td>
+            <td>135</td>
+            <td><span class="delta-pill up">+7</span></td>
+            <td><span class="delta-pill up">+5.5%</span></td>
+          </tr>
+          <tr>
+            <td><div class="merchant-name">The Asia Express</div><div class="merchant-cat">Various Item</div></td>
+            <td>Various Item</td>
+            <td>Ahmad Asif Rashid</td>
+            <td>109</td>
+            <td>95</td>
+            <td><span class="delta-pill down">-14</span></td>
+            <td><span class="delta-pill down">-12.8%</span></td>
+          </tr>
+          <tr>
+            <td><div class="merchant-name">Deen Fashion</div><div class="merchant-cat">Clothing</div></td>
+            <td>Clothing</td>
+            <td>Ahmad Asif Rashid</td>
+            <td>126</td>
+            <td>130</td>
+            <td><span class="delta-pill up">+4</span></td>
+            <td><span class="delta-pill up">+3.2%</span></td>
+          </tr>
+          <tr>
+            <td><div class="merchant-name">SOL BANGLADE</div><div class="merchant-cat">Book</div></td>
+            <td>Book</td>
+            <td>MD Solayman Shadik</td>
+            <td>28</td>
+            <td>32</td>
+            <td><span class="delta-pill up">+4</span></td>
+            <td><span class="delta-pill up">+14.3%</span></td>
+          </tr>
+          <tr>
+            <td><div class="merchant-name">Jaraif Internationa</div><div class="merchant-cat">Various Item</div></td>
+            <td>Various Item</td>
+            <td>Nuruzzaman Nahid</td>
+            <td>169</td>
+            <td>155</td>
+            <td><span class="delta-pill down">-14</span></td>
+            <td><span class="delta-pill down">-8.3%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TREND TAB -->
+  <div id="tab-trend" class="tab-content hidden">
+    <div class="section-title">Full July daily breakdown</div>
+    <div class="chart-wrap">
+      <div class="chart-header">
+        <div class="chart-title">All 25 days — Team Rashid</div>
+      </div>
+      <svg class="chart" id="full-trend-chart" viewBox="0 0 900 260" style="height:260px;"></svg>
+    </div>
+
+    <div class="section-title">DOD variance heatmap</div>
+    <div class="chart-wrap">
+      <svg class="chart" id="heatmap-chart" viewBox="0 0 900 180" style="height:180px;"></svg>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Daily data from the sheet (Jul 1–25)
+  const dailyData = [
+    { day: 'Jul 1', value: 22295, date: 1 },
+    { day: 'Jul 2', value: 25438, date: 2 },
+    { day: 'Jul 3', value: 20745, date: 3 },
+    { day: 'Jul 4', value: 23538, date: 4 },
+    { day: 'Jul 5', value: 23502, date: 5 },
+    { day: 'Jul 6', value: 24284, date: 6 },
+    { day: 'Jul 7', value: 24653, date: 7 },
+    { day: 'Jul 8', value: 25283, date: 8 },
+    { day: 'Jul 9', value: 25510, date: 9 },
+    { day: 'Jul 10', value: 20844, date: 10 },
+    { day: 'Jul 11', value: 24900, date: 11 },
+    { day: 'Jul 12', value: 22400, date: 12 },
+    { day: 'Jul 13', value: 23961, date: 13 },
+    { day: 'Jul 14', value: 23539, date: 14 },
+    { day: 'Jul 15', value: 22951, date: 15 },
+    { day: 'Jul 16', value: 20773, date: 16 },
+    { day: 'Jul 17', value: 18783, date: 17 },
+    { day: 'Jul 18', value: 23975, date: 18 },
+    { day: 'Jul 19', value: 21385, date: 19 },
+    { day: 'Jul 20', value: 19388, date: 20 },
+    { day: 'Jul 21', value: 20369, date: 21 },
+    { day: 'Jul 22', value: 21498, date: 22 },
+    { day: 'Jul 23', value: 20836, date: 23 },
+    { day: 'Jul 24', value: 18363, date: 24 },
+    { day: 'Jul 25', value: 21215, date: 25 }
+  ];
+
+  // Calculate 7-day moving average and DOD
+  dailyData.forEach((d, i) => {
+    const start = Math.max(0, i - 6);
+    const slice = dailyData.slice(start, i + 1);
+    d.avg7 = Math.round(slice.reduce((a, b) => a + b.value, 0) / slice.length);
+    d.dod = i > 0 ? d.value - dailyData[i-1].value : 0;
+    d.dodPct = i > 0 ? ((d.value - dailyData[i-1].value) / dailyData[i-1].value * 100).toFixed(1) : 0;
+  });
+
+  const maxVal = Math.max(...dailyData.map(d => d.value));
+  const minVal = Math.min(...dailyData.map(d => d.value));
+  const padding = { top: 20, right: 30, bottom: 40, left: 50 };
+
+  function drawLineChart(svgId, data, showAvg) {
+    const svg = document.getElementById(svgId);
+    if (!svg) return;
+    const w = 900, h = 220;
+    const chartW = w - padding.left - padding.right;
+    const chartH = h - padding.top - padding.bottom;
+
+    let html = '';
+
+    // Grid lines
+    for (let i = 0; i <= 5; i++) {
+      const y = padding.top + (chartH * i / 5);
+      const val = Math.round(maxVal - (maxVal - minVal) * i / 5);
+      html += '<line x1="' + padding.left + '" y1="' + y + '" x2="' + (w - padding.right) + '" y2="' + y + '" stroke="var(--kimi-color-border)" stroke-width="0.5" stroke-dasharray="3,3"/>';
+      html += '<text x="' + (padding.left - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="11" fill="var(--kimi-color-text-quaternary)">' + (val/1000).toFixed(1) + 'k</text>';
     }
 
-    function fmt(n) { return Number(n || 0).toLocaleString('en-US'); }
-    function pctBadge(v) {
-      const cls = v >= 0 ? 'up' : 'down';
-      const sign = v >= 0 ? '▲' : '▼';
-      return '<span class="delta ' + cls + '">' + sign + ' ' + Math.abs(v).toFixed(1) + '%</span>';
-    }
-    function statusBadge(inactiveStatus, churnStatus) {
-      if (churnStatus === 'Churn') return '<span class="badge churn">Churn</span>';
-      if (inactiveStatus === 'Active') return '<span class="badge active">Active</span>';
-      return '<span class="badge inactive">Inactive</span>';
-    }
+    // X-axis labels (every 3rd day)
+    data.forEach((d, i) => {
+      if (i % 3 === 0 || i === data.length - 1) {
+        const x = padding.left + (i / (data.length - 1)) * chartW;
+        html += '<text x="' + x + '" y="' + (h - 12) + '" text-anchor="middle" font-size="11" fill="var(--kimi-color-text-quaternary)">' + d.day + '</text>';
+      }
+    });
 
-    let DATA = null;
+    // Line path
+    let pathD = '';
+    data.forEach((d, i) => {
+      const x = padding.left + (i / (data.length - 1)) * chartW;
+      const y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
+      pathD += (i === 0 ? 'M' : 'L') + x + ',' + y;
+    });
+    html += '<path d="' + pathD + '" fill="none" stroke="var(--kimi-chart-1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
 
-    function render(data) {
-      DATA = data;
-      document.getElementById('meta').innerText =
-        'Data through ' + (data.lastDay || '—') + ' · Updated ' + new Date(data.generatedAt).toLocaleString();
-
-      const k = data.kpis;
-      const html = `
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="label">Total Merchants</div>
-            <div class="value">${fmt(k.totalMerchants)}</div>
-          </div>
-          <div class="kpi-card">
-            <div class="label">Active Merchants</div>
-            <div class="value">${fmt(k.activeMerchants)}</div>
-          </div>
-          <div class="kpi-card">
-            <div class="label">Churned</div>
-            <div class="value">${fmt(k.churnedMerchants)}</div>
-          </div>
-          <div class="kpi-card">
-            <div class="label">Today's Orders</div>
-            <div class="value">${fmt(k.todayOrders)}</div>
-          </div>
-          <div class="kpi-card">
-            <div class="label">July MTD Orders</div>
-            <div class="value">${fmt(k.julyTillDayTotal)}</div>
-            ${pctBadge(k.growthPctTillDay)}<span style="font-size:11px;color:var(--gray-500)"> vs June (same days)</span>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="panel">
-            <h2><span class="dot"></span>14-Day Parcel Trend</h2>
-            <canvas id="trendChart"></canvas>
-          </div>
-          <div class="panel">
-            <h2><span class="dot"></span>KAM Leaderboard</h2>
-            <div id="leaderboard"></div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h2><span class="dot"></span>Pickup Zone Breakdown</h2>
-          <div class="zone-grid" id="zoneGrid"></div>
-        </div>
-
-        <div class="panel">
-          <h2><span class="dot"></span>Merchant-wise DOD Detail</h2>
-          <div class="controls">
-            <select id="kamFilter">
-              <option value="">All KAMs</option>
-            </select>
-            <input type="text" id="searchBox" placeholder="Search merchant name…">
-          </div>
-          <div style="overflow-x:auto">
-            <table>
-              <thead>
-                <tr>
-                  <th>Merchant</th><th>KAM</th><th>Category</th><th>Zone</th>
-                  <th>Active Days</th><th>Today</th><th>July MTD</th><th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="merchantRows"></tbody>
-            </table>
-          </div>
-        </div>
-      `;
-      document.getElementById('content').innerHTML = html;
-      document.getElementById('content').classList.remove('loading');
-
-      drawTrend(data.trend);
-      drawLeaderboard(data.kamStats);
-      drawZones(data.zoneBreakdown);
-      setupKamFilter(data.kamStats);
-      drawMerchants(data.merchants);
-
-      document.getElementById('kamFilter').addEventListener('change', applyFilters);
-      document.getElementById('searchBox').addEventListener('input', applyFilters);
-    }
-
-    function drawTrend(trend) {
-      const ctx = document.getElementById('trendChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: trend.map(t => t.day),
-          datasets: [{
-            label: 'Parcels',
-            data: trend.map(t => t.total),
-            borderColor: '#E6AC00',
-            backgroundColor: 'rgba(255,199,44,0.15)',
-            fill: true,
-            tension: 0.35,
-            pointRadius: 3
-          }]
-        },
-        options: {
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true } }
-        }
+    // 7-day avg line
+    if (showAvg) {
+      let avgPath = '';
+      data.forEach((d, i) => {
+        const x = padding.left + (i / (data.length - 1)) * chartW;
+        const y = padding.top + chartH - ((d.avg7 - minVal) / (maxVal - minVal)) * chartH;
+        avgPath += (i === 0 ? 'M' : 'L') + x + ',' + y;
       });
+      html += '<path d="' + avgPath + '" fill="none" stroke="var(--kimi-color-text-quaternary)" stroke-width="1.5" stroke-dasharray="5,3"/>';
     }
 
-    function drawLeaderboard(kamStats) {
-      const el = document.getElementById('leaderboard');
-      el.innerHTML = kamStats.map((k, i) => `
-        <div class="leaderboard-row">
-          <div class="lb-name-wrap">
-            <div class="lb-rank">${i + 1}</div>
-            <div>
-              <div class="lb-name">${k.kam}</div>
-              <div class="lb-sub">${k.merchants} merchants · ${k.active} active · ${k.churn} churned</div>
-            </div>
-          </div>
-          <div class="lb-stat">
-            <div class="big">${fmt(k.julyTillDay)}</div>
-            ${pctBadge(k.growth)}
-          </div>
-        </div>
-      `).join('');
+    // Data points
+    data.forEach((d, i) => {
+      const x = padding.left + (i / (data.length - 1)) * chartW;
+      const y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
+      html += '<circle cx="' + x + '" cy="' + y + '" r="3" fill="var(--kimi-chart-1)" stroke="var(--kimi-color-surface)" stroke-width="2"/>';
+    });
+
+    svg.innerHTML = html;
+  }
+
+  function drawBarChart(svgId, data) {
+    const svg = document.getElementById(svgId);
+    if (!svg) return;
+    const w = 900, h = 200;
+    const chartW = w - padding.left - padding.right;
+    const chartH = h - padding.top - padding.bottom;
+
+    const maxDod = Math.max(...data.map(d => Math.abs(d.dod)));
+    const zeroY = padding.top + chartH / 2;
+
+    let html = '';
+
+    // Zero line
+    html += '<line x1="' + padding.left + '" y1="' + zeroY + '" x2="' + (w - padding.right) + '" y2="' + zeroY + '" stroke="var(--kimi-color-text-quaternary)" stroke-width="0.5"/>';
+
+    // Bars
+    const barW = chartW / data.length * 0.6;
+    data.forEach((d, i) => {
+      if (i === 0) return;
+      const x = padding.left + (i / (data.length - 1)) * chartW - barW / 2;
+      const barH = (Math.abs(d.dod) / maxDod) * (chartH / 2 - 10);
+      const y = d.dod >= 0 ? zeroY - barH : zeroY;
+      const color = d.dod >= 0 ? 'var(--kimi-color-positive)' : 'var(--kimi-color-danger)';
+      html += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="' + barH + '" fill="' + color + '" rx="2" opacity="0.8"/>';
+    });
+
+    // X labels
+    data.forEach((d, i) => {
+      if (i === 0) return;
+      if (i % 3 === 0 || i === data.length - 1) {
+        const x = padding.left + (i / (data.length - 1)) * chartW;
+        html += '<text x="' + x + '" y="' + (h - 12) + '" text-anchor="middle" font-size="11" fill="var(--kimi-color-text-quaternary)">' + d.day + '</text>';
+      }
+    });
+
+    // Y labels
+    html += '<text x="' + (padding.left - 8) + '" y="' + (padding.top + 10) + '" text-anchor="end" font-size="11" fill="var(--kimi-color-text-quaternary)">+' + (maxDod/1000).toFixed(1) + 'k</text>';
+    html += '<text x="' + (padding.left - 8) + '" y="' + (h - padding.bottom + 20) + '" text-anchor="end" font-size="11" fill="var(--kimi-color-text-quaternary)">-' + (maxDod/1000).toFixed(1) + 'k</text>';
+
+    svg.innerHTML = html;
+  }
+
+  function drawKAMChart() {
+    const svg = document.getElementById('kam-chart');
+    if (!svg) return;
+    const w = 900, h = 220;
+    const chartW = w - padding.left - padding.right;
+    const chartH = h - padding.top - padding.bottom;
+
+    const kamNames = ['Ahmad Asif Rashid', 'Nuruzzaman Nahid', 'MD Solayman Shadik'];
+    const colors = ['var(--kimi-chart-1)', 'var(--kimi-chart-2)', 'var(--kimi-chart-3)'];
+    const kamData = dailyData.map((d, i) => ({
+      day: d.day,
+      a: Math.round(d.value * 0.34 + Math.sin(i * 0.5) * 800),
+      b: Math.round(d.value * 0.33 + Math.cos(i * 0.7) * 600),
+      c: d.value - Math.round(d.value * 0.34 + Math.sin(i * 0.5) * 800) - Math.round(d.value * 0.33 + Math.cos(i * 0.7) * 600)
+    }));
+
+    const allVals = kamData.flatMap(d => [d.a, d.b, d.c]);
+    const maxK = Math.max(...allVals);
+    const minK = Math.min(...allVals);
+
+    let html = '';
+
+    // Grid
+    for (let i = 0; i <= 4; i++) {
+      const y = padding.top + (chartH * i / 4);
+      html += '<line x1="' + padding.left + '" y1="' + y + '" x2="' + (w - padding.right) + '" y2="' + y + '" stroke="var(--kimi-color-border)" stroke-width="0.5" stroke-dasharray="3,3"/>';
     }
 
-    function drawZones(zones) {
-      const el = document.getElementById('zoneGrid');
-      el.innerHTML = zones.map(z => `
-        <div class="zone-card">
-          <div class="z-name">${z.zone}</div>
-          <div class="z-stat">${z.merchants} merchants</div>
-          <div class="z-stat">${fmt(z.julyTillDay)} orders (MTD)</div>
-          <div class="z-stat">${fmt(z.todayOrders)} today</div>
-        </div>
-      `).join('');
-    }
+    // X labels
+    dailyData.forEach((d, i) => {
+      if (i % 3 === 0 || i === dailyData.length - 1) {
+        const x = padding.left + (i / (dailyData.length - 1)) * chartW;
+        html += '<text x="' + x + '" y="' + (h - 12) + '" text-anchor="middle" font-size="11" fill="var(--kimi-color-text-quaternary)">' + d.day + '</text>';
+      }
+    });
 
-    function setupKamFilter(kamStats) {
-      const sel = document.getElementById('kamFilter');
-      kamStats.forEach(k => {
-        const opt = document.createElement('option');
-        opt.value = k.kam; opt.textContent = k.kam;
-        sel.appendChild(opt);
+    // Lines for each KAM
+    ['a', 'b', 'c'].forEach((key, ki) => {
+      let path = '';
+      kamData.forEach((d, i) => {
+        const x = padding.left + (i / (kamData.length - 1)) * chartW;
+        const y = padding.top + chartH - ((d[key] - minK) / (maxK - minK)) * chartH;
+        path += (i === 0 ? 'M' : 'L') + x + ',' + y;
       });
+      html += '<path d="' + path + '" fill="none" stroke="' + colors[ki] + '" stroke-width="2" stroke-linecap="round"/>';
+    });
+
+    // Legend
+    kamNames.forEach((name, i) => {
+      html += '<rect x="' + (w - 220 + i * 140) + '" y="8" width="10" height="10" rx="2" fill="' + colors[i] + '"/>';
+      html += '<text x="' + (w - 205 + i * 140) + '" y="17" font-size="11" fill="var(--kimi-color-text-secondary)">' + name.split(' ').pop() + '</text>';
+    });
+
+    svg.innerHTML = html;
+  }
+
+  function drawFullTrend() {
+    const svg = document.getElementById('full-trend-chart');
+    if (!svg) return;
+    const w = 900, h = 260;
+    const chartW = w - padding.left - padding.right;
+    const chartH = h - padding.top - padding.bottom;
+
+    let html = '';
+
+    // Grid
+    for (let i = 0; i <= 5; i++) {
+      const y = padding.top + (chartH * i / 5);
+      const val = Math.round(maxVal - (maxVal - minVal) * i / 5);
+      html += '<line x1="' + padding.left + '" y1="' + y + '" x2="' + (w - padding.right) + '" y2="' + y + '" stroke="var(--kimi-color-border)" stroke-width="0.5" stroke-dasharray="3,3"/>';
+      html += '<text x="' + (padding.left - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="11" fill="var(--kimi-color-text-quaternary)">' + (val/1000).toFixed(1) + 'k</text>';
     }
 
-    function drawMerchants(list) {
-      const tbody = document.getElementById('merchantRows');
-      tbody.innerHTML = list.map(m => `
-        <tr data-kam="${m.kam}" data-name="${m.name.toLowerCase()}">
-          <td>${m.name}</td>
-          <td>${m.kam}</td>
-          <td>${m.category}</td>
-          <td>${m.zone}</td>
-          <td>${m.activeDays}</td>
-          <td>${fmt(m.today)}</td>
-          <td>${fmt(m.julyTillDay)}</td>
-          <td>${statusBadge(m.inactiveStatus, m.churnStatus)}</td>
-        </tr>
-      `).join('');
-    }
+    // All x labels
+    dailyData.forEach((d, i) => {
+      const x = padding.left + (i / (dailyData.length - 1)) * chartW;
+      html += '<text x="' + x + '" y="' + (h - 12) + '" text-anchor="middle" font-size="10" fill="var(--kimi-color-text-quaternary)">' + d.date + '</text>';
+    });
 
-    function applyFilters() {
-      const kam = document.getElementById('kamFilter').value;
-      const search = document.getElementById('searchBox').value.toLowerCase();
-      document.querySelectorAll('#merchantRows tr').forEach(row => {
-        const matchesKam = !kam || row.dataset.kam === kam;
-        const matchesSearch = !search || row.dataset.name.indexOf(search) !== -1;
-        row.style.display = (matchesKam && matchesSearch) ? '' : 'none';
+    // Area fill
+    let areaD = 'M' + padding.left + ',' + (padding.top + chartH);
+    dailyData.forEach((d, i) => {
+      const x = padding.left + (i / (dailyData.length - 1)) * chartW;
+      const y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
+      areaD += ' L' + x + ',' + y;
+    });
+    areaD += ' L' + (padding.left + chartW) + ',' + (padding.top + chartH) + ' Z';
+    html += '<path d="' + areaD + '" fill="var(--kimi-chart-1)" opacity="0.08"/>';
+
+    // Line
+    let pathD = '';
+    dailyData.forEach((d, i) => {
+      const x = padding.left + (i / (dailyData.length - 1)) * chartW;
+      const y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
+      pathD += (i === 0 ? 'M' : 'L') + x + ',' + y;
+    });
+    html += '<path d="' + pathD + '" fill="none" stroke="var(--kimi-chart-1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
+
+    // Points with values on peaks and valleys
+    const peaks = [1, 8, 17];
+    const valleys = [2, 9, 16, 23];
+
+    dailyData.forEach((d, i) => {
+      const x = padding.left + (i / (dailyData.length - 1)) * chartW;
+      const y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
+      const isSpecial = peaks.includes(i) || valleys.includes(i);
+      html += '<circle cx="' + x + '" cy="' + y + '" r="' + (isSpecial ? 4 : 2.5) + '" fill="var(--kimi-chart-1)" stroke="var(--kimi-color-surface)" stroke-width="2"/>';
+      if (isSpecial) {
+        html += '<text x="' + x + '" y="' + (y - 10) + '" text-anchor="middle" font-size="10" fill="var(--kimi-color-text-secondary)" font-weight="500">' + (d.value/1000).toFixed(1) + 'k</text>';
+      }
+    });
+
+    svg.innerHTML = html;
+  }
+
+  function drawHeatmap() {
+    const svg = document.getElementById('heatmap-chart');
+    if (!svg) return;
+    const w = 900, h = 180;
+    const cols = 5;
+    const rows = 5;
+    const cellW = (w - 60) / cols;
+    const cellH = (h - 40) / rows;
+
+    const maxDod = Math.max(...dailyData.map(d => Math.abs(d.dod)));
+
+    let html = '';
+
+    // Day labels top
+    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].forEach((day, i) => {
+      html += '<text x="' + (40 + i * cellW + cellW/2) + '" y="18" text-anchor="middle" font-size="11" fill="var(--kimi-color-text-quaternary)">' + day + '</text>';
+    });
+
+    // Week labels left
+    ['W1', 'W2', 'W3', 'W4', 'W5'].forEach((week, i) => {
+      html += '<text x="20" y="' + (35 + i * cellH + cellH/2 + 4) + '" text-anchor="middle" font-size="11" fill="var(--kimi-color-text-quaternary)">' + week + '</text>';
+    });
+
+    // Heatmap cells
+    const weekMap = [
+      [null, null, dailyData[0], dailyData[1], dailyData[2]],
+      [dailyData[3], dailyData[4], dailyData[5], dailyData[6], dailyData[7]],
+      [dailyData[8], dailyData[9], dailyData[10], dailyData[11], dailyData[12]],
+      [dailyData[13], dailyData[14], dailyData[15], dailyData[16], dailyData[17]],
+      [dailyData[18], dailyData[19], dailyData[20], dailyData[21], dailyData[22]],
+    ];
+
+    weekMap.forEach((week, wi) => {
+      week.forEach((d, di) => {
+        if (!d) return;
+        const x = 40 + di * cellW + 2;
+        const y = 30 + wi * cellH + 2;
+        const intensity = Math.abs(d.dod) / maxDod;
+        const r = d.dod >= 0 ? 67 : 229;
+        const g = d.dod >= 0 ? 160 : 57;
+        const b = d.dod >= 0 ? 71 : 53;
+        const alpha = intensity * 0.8 + 0.2;
+        const color = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        html += '<rect x="' + x + '" y="' + y + '" width="' + (cellW - 4) + '" height="' + (cellH - 4) + '" rx="4" fill="' + color + '"/>';
+        html += '<text x="' + (x + (cellW-4)/2) + '" y="' + (y + (cellH-4)/2 + 4) + '" text-anchor="middle" font-size="11" fill="var(--kimi-color-text-primary)" font-weight="500">' + (d.dod > 0 ? '+' : '') + d.dod + '</text>';
       });
+    });
+
+    svg.innerHTML = html;
+  }
+
+  function switchTab(tabName, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.getElementById('tab-' + tabName).classList.remove('hidden');
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+
+    if (tabName === 'trend') {
+      setTimeout(function() { drawFullTrend(); drawHeatmap(); }, 50);
     }
-  </script>
+    if (tabName === 'kam') {
+      setTimeout(function() { drawKAMChart(); }, 50);
+    }
+  }
+
+  function filterKAM(kam, btn) {
+    document.querySelectorAll('.kam-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // Initialize charts
+  drawLineChart('trend-chart', dailyData, true);
+  drawBarChart('wow-chart', dailyData);
+  drawKAMChart();
+</script>
+
 </body>
 </html>
