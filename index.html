@@ -298,7 +298,7 @@
 
 <script>
   // Daily data from the sheet (Jul 1–25)
-  const dailyData = [
+  var dailyData = [
     { day: 'Jul 1', value: 22295, date: 1 },
     { day: 'Jul 2', value: 25438, date: 2 },
     { day: 'Jul 3', value: 20745, date: 3 },
@@ -327,67 +327,67 @@
   ];
 
   // Calculate 7-day moving average and DOD
-  dailyData.forEach((d, i) => {
-    const start = Math.max(0, i - 6);
-    const slice = dailyData.slice(start, i + 1);
-    d.avg7 = Math.round(slice.reduce((a, b) => a + b.value, 0) / slice.length);
+  dailyData.forEach(function(d, i) {
+    var start = Math.max(0, i - 6);
+    var slice = dailyData.slice(start, i + 1);
+    d.avg7 = Math.round(slice.reduce(function(a, b) { return a + b.value; }, 0) / slice.length);
     d.dod = i > 0 ? d.value - dailyData[i-1].value : 0;
     d.dodPct = i > 0 ? ((d.value - dailyData[i-1].value) / dailyData[i-1].value * 100).toFixed(1) : 0;
   });
 
-  const maxVal = Math.max(...dailyData.map(d => d.value));
-  const minVal = Math.min(...dailyData.map(d => d.value));
-  const padding = { top: 20, right: 30, bottom: 40, left: 50 };
+  var maxVal = Math.max.apply(null, dailyData.map(function(d) { return d.value; }));
+  var minVal = Math.min.apply(null, dailyData.map(function(d) { return d.value; }));
+  var padding = { top: 20, right: 30, bottom: 40, left: 50 };
 
   function drawLineChart(svgId, data, showAvg) {
-    const svg = document.getElementById(svgId);
+    var svg = document.getElementById(svgId);
     if (!svg) return;
-    const w = 900, h = 220;
-    const chartW = w - padding.left - padding.right;
-    const chartH = h - padding.top - padding.bottom;
+    var w = 900, h = 220;
+    var chartW = w - padding.left - padding.right;
+    var chartH = h - padding.top - padding.bottom;
 
-    let html = '';
+    var html = '';
 
     // Grid lines
-    for (let i = 0; i <= 5; i++) {
-      const y = padding.top + (chartH * i / 5);
-      const val = Math.round(maxVal - (maxVal - minVal) * i / 5);
+    for (var i = 0; i <= 5; i++) {
+      var y = padding.top + (chartH * i / 5);
+      var val = Math.round(maxVal - (maxVal - minVal) * i / 5);
       html += '<line x1="' + padding.left + '" y1="' + y + '" x2="' + (w - padding.right) + '" y2="' + y + '" stroke="var(--kimi-color-border)" stroke-width="0.5" stroke-dasharray="3,3"/>';
       html += '<text x="' + (padding.left - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="11" fill="var(--kimi-color-text-quaternary)">' + (val/1000).toFixed(1) + 'k</text>';
     }
 
     // X-axis labels (every 3rd day)
-    data.forEach((d, i) => {
+    data.forEach(function(d, i) {
       if (i % 3 === 0 || i === data.length - 1) {
-        const x = padding.left + (i / (data.length - 1)) * chartW;
+        var x = padding.left + (i / (data.length - 1)) * chartW;
         html += '<text x="' + x + '" y="' + (h - 12) + '" text-anchor="middle" font-size="11" fill="var(--kimi-color-text-quaternary)">' + d.day + '</text>';
       }
     });
 
     // Line path
-    let pathD = '';
-    data.forEach((d, i) => {
-      const x = padding.left + (i / (data.length - 1)) * chartW;
-      const y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
+    var pathD = '';
+    data.forEach(function(d, i) {
+      var x = padding.left + (i / (data.length - 1)) * chartW;
+      var y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
       pathD += (i === 0 ? 'M' : 'L') + x + ',' + y;
     });
     html += '<path d="' + pathD + '" fill="none" stroke="var(--kimi-chart-1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
 
     // 7-day avg line
     if (showAvg) {
-      let avgPath = '';
-      data.forEach((d, i) => {
-        const x = padding.left + (i / (data.length - 1)) * chartW;
-        const y = padding.top + chartH - ((d.avg7 - minVal) / (maxVal - minVal)) * chartH;
+      var avgPath = '';
+      data.forEach(function(d, i) {
+        var x = padding.left + (i / (data.length - 1)) * chartW;
+        var y = padding.top + chartH - ((d.avg7 - minVal) / (maxVal - minVal)) * chartH;
         avgPath += (i === 0 ? 'M' : 'L') + x + ',' + y;
       });
       html += '<path d="' + avgPath + '" fill="none" stroke="var(--kimi-color-text-quaternary)" stroke-width="1.5" stroke-dasharray="5,3"/>';
     }
 
     // Data points
-    data.forEach((d, i) => {
-      const x = padding.left + (i / (data.length - 1)) * chartW;
-      const y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
+    data.forEach(function(d, i) {
+      var x = padding.left + (i / (data.length - 1)) * chartW;
+      var y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
       html += '<circle cx="' + x + '" cy="' + y + '" r="3" fill="var(--kimi-chart-1)" stroke="var(--kimi-color-surface)" stroke-width="2"/>';
     });
 
@@ -395,36 +395,36 @@
   }
 
   function drawBarChart(svgId, data) {
-    const svg = document.getElementById(svgId);
+    var svg = document.getElementById(svgId);
     if (!svg) return;
-    const w = 900, h = 200;
-    const chartW = w - padding.left - padding.right;
-    const chartH = h - padding.top - padding.bottom;
+    var w = 900, h = 200;
+    var chartW = w - padding.left - padding.right;
+    var chartH = h - padding.top - padding.bottom;
 
-    const maxDod = Math.max(...data.map(d => Math.abs(d.dod)));
-    const zeroY = padding.top + chartH / 2;
+    var maxDod = Math.max.apply(null, data.map(function(d) { return Math.abs(d.dod); }));
+    var zeroY = padding.top + chartH / 2;
 
-    let html = '';
+    var html = '';
 
     // Zero line
     html += '<line x1="' + padding.left + '" y1="' + zeroY + '" x2="' + (w - padding.right) + '" y2="' + zeroY + '" stroke="var(--kimi-color-text-quaternary)" stroke-width="0.5"/>';
 
     // Bars
-    const barW = chartW / data.length * 0.6;
-    data.forEach((d, i) => {
+    var barW = chartW / data.length * 0.6;
+    data.forEach(function(d, i) {
       if (i === 0) return;
-      const x = padding.left + (i / (data.length - 1)) * chartW - barW / 2;
-      const barH = (Math.abs(d.dod) / maxDod) * (chartH / 2 - 10);
-      const y = d.dod >= 0 ? zeroY - barH : zeroY;
-      const color = d.dod >= 0 ? 'var(--kimi-color-positive)' : 'var(--kimi-color-danger)';
+      var x = padding.left + (i / (data.length - 1)) * chartW - barW / 2;
+      var barH = (Math.abs(d.dod) / maxDod) * (chartH / 2 - 10);
+      var y = d.dod >= 0 ? zeroY - barH : zeroY;
+      var color = d.dod >= 0 ? 'var(--kimi-color-positive)' : 'var(--kimi-color-danger)';
       html += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="' + barH + '" fill="' + color + '" rx="2" opacity="0.8"/>';
     });
 
     // X labels
-    data.forEach((d, i) => {
+    data.forEach(function(d, i) {
       if (i === 0) return;
       if (i % 3 === 0 || i === data.length - 1) {
-        const x = padding.left + (i / (data.length - 1)) * chartW;
+        var x = padding.left + (i / (data.length - 1)) * chartW;
         html += '<text x="' + x + '" y="' + (h - 12) + '" text-anchor="middle" font-size="11" fill="var(--kimi-color-text-quaternary)">' + d.day + '</text>';
       }
     });
@@ -437,54 +437,57 @@
   }
 
   function drawKAMChart() {
-    const svg = document.getElementById('kam-chart');
+    var svg = document.getElementById('kam-chart');
     if (!svg) return;
-    const w = 900, h = 220;
-    const chartW = w - padding.left - padding.right;
-    const chartH = h - padding.top - padding.bottom;
+    var w = 900, h = 220;
+    var chartW = w - padding.left - padding.right;
+    var chartH = h - padding.top - padding.bottom;
 
-    const kamNames = ['Ahmad Asif Rashid', 'Nuruzzaman Nahid', 'MD Solayman Shadik'];
-    const colors = ['var(--kimi-chart-1)', 'var(--kimi-chart-2)', 'var(--kimi-chart-3)'];
-    const kamData = dailyData.map((d, i) => ({
-      day: d.day,
-      a: Math.round(d.value * 0.34 + Math.sin(i * 0.5) * 800),
-      b: Math.round(d.value * 0.33 + Math.cos(i * 0.7) * 600),
-      c: d.value - Math.round(d.value * 0.34 + Math.sin(i * 0.5) * 800) - Math.round(d.value * 0.33 + Math.cos(i * 0.7) * 600)
-    }));
+    var kamNames = ['Ahmad Asif Rashid', 'Nuruzzaman Nahid', 'MD Solayman Shadik'];
+    var colors = ['var(--kimi-chart-1)', 'var(--kimi-chart-2)', 'var(--kimi-chart-3)'];
+    var kamData = dailyData.map(function(d, i) {
+      return {
+        day: d.day,
+        a: Math.round(d.value * 0.34 + Math.sin(i * 0.5) * 800),
+        b: Math.round(d.value * 0.33 + Math.cos(i * 0.7) * 600),
+        c: d.value - Math.round(d.value * 0.34 + Math.sin(i * 0.5) * 800) - Math.round(d.value * 0.33 + Math.cos(i * 0.7) * 600)
+      };
+    });
 
-    const allVals = kamData.flatMap(d => [d.a, d.b, d.c]);
-    const maxK = Math.max(...allVals);
-    const minK = Math.min(...allVals);
+    var allVals = [];
+    kamData.forEach(function(d) { allVals.push(d.a, d.b, d.c); });
+    var maxK = Math.max.apply(null, allVals);
+    var minK = Math.min.apply(null, allVals);
 
-    let html = '';
+    var html = '';
 
     // Grid
-    for (let i = 0; i <= 4; i++) {
-      const y = padding.top + (chartH * i / 4);
+    for (var i = 0; i <= 4; i++) {
+      var y = padding.top + (chartH * i / 4);
       html += '<line x1="' + padding.left + '" y1="' + y + '" x2="' + (w - padding.right) + '" y2="' + y + '" stroke="var(--kimi-color-border)" stroke-width="0.5" stroke-dasharray="3,3"/>';
     }
 
     // X labels
-    dailyData.forEach((d, i) => {
+    dailyData.forEach(function(d, i) {
       if (i % 3 === 0 || i === dailyData.length - 1) {
-        const x = padding.left + (i / (dailyData.length - 1)) * chartW;
+        var x = padding.left + (i / (dailyData.length - 1)) * chartW;
         html += '<text x="' + x + '" y="' + (h - 12) + '" text-anchor="middle" font-size="11" fill="var(--kimi-color-text-quaternary)">' + d.day + '</text>';
       }
     });
 
     // Lines for each KAM
-    ['a', 'b', 'c'].forEach((key, ki) => {
-      let path = '';
-      kamData.forEach((d, i) => {
-        const x = padding.left + (i / (kamData.length - 1)) * chartW;
-        const y = padding.top + chartH - ((d[key] - minK) / (maxK - minK)) * chartH;
+    ['a', 'b', 'c'].forEach(function(key, ki) {
+      var path = '';
+      kamData.forEach(function(d, i) {
+        var x = padding.left + (i / (kamData.length - 1)) * chartW;
+        var y = padding.top + chartH - ((d[key] - minK) / (maxK - minK)) * chartH;
         path += (i === 0 ? 'M' : 'L') + x + ',' + y;
       });
       html += '<path d="' + path + '" fill="none" stroke="' + colors[ki] + '" stroke-width="2" stroke-linecap="round"/>';
     });
 
     // Legend
-    kamNames.forEach((name, i) => {
+    kamNames.forEach(function(name, i) {
       html += '<rect x="' + (w - 220 + i * 140) + '" y="8" width="10" height="10" rx="2" fill="' + colors[i] + '"/>';
       html += '<text x="' + (w - 205 + i * 140) + '" y="17" font-size="11" fill="var(--kimi-color-text-secondary)">' + name.split(' ').pop() + '</text>';
     });
@@ -493,55 +496,55 @@
   }
 
   function drawFullTrend() {
-    const svg = document.getElementById('full-trend-chart');
+    var svg = document.getElementById('full-trend-chart');
     if (!svg) return;
-    const w = 900, h = 260;
-    const chartW = w - padding.left - padding.right;
-    const chartH = h - padding.top - padding.bottom;
+    var w = 900, h = 260;
+    var chartW = w - padding.left - padding.right;
+    var chartH = h - padding.top - padding.bottom;
 
-    let html = '';
+    var html = '';
 
     // Grid
-    for (let i = 0; i <= 5; i++) {
-      const y = padding.top + (chartH * i / 5);
-      const val = Math.round(maxVal - (maxVal - minVal) * i / 5);
+    for (var i = 0; i <= 5; i++) {
+      var y = padding.top + (chartH * i / 5);
+      var val = Math.round(maxVal - (maxVal - minVal) * i / 5);
       html += '<line x1="' + padding.left + '" y1="' + y + '" x2="' + (w - padding.right) + '" y2="' + y + '" stroke="var(--kimi-color-border)" stroke-width="0.5" stroke-dasharray="3,3"/>';
       html += '<text x="' + (padding.left - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="11" fill="var(--kimi-color-text-quaternary)">' + (val/1000).toFixed(1) + 'k</text>';
     }
 
     // All x labels
-    dailyData.forEach((d, i) => {
-      const x = padding.left + (i / (dailyData.length - 1)) * chartW;
+    dailyData.forEach(function(d, i) {
+      var x = padding.left + (i / (dailyData.length - 1)) * chartW;
       html += '<text x="' + x + '" y="' + (h - 12) + '" text-anchor="middle" font-size="10" fill="var(--kimi-color-text-quaternary)">' + d.date + '</text>';
     });
 
     // Area fill
-    let areaD = 'M' + padding.left + ',' + (padding.top + chartH);
-    dailyData.forEach((d, i) => {
-      const x = padding.left + (i / (dailyData.length - 1)) * chartW;
-      const y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
+    var areaD = 'M' + padding.left + ',' + (padding.top + chartH);
+    dailyData.forEach(function(d, i) {
+      var x = padding.left + (i / (dailyData.length - 1)) * chartW;
+      var y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
       areaD += ' L' + x + ',' + y;
     });
     areaD += ' L' + (padding.left + chartW) + ',' + (padding.top + chartH) + ' Z';
     html += '<path d="' + areaD + '" fill="var(--kimi-chart-1)" opacity="0.08"/>';
 
     // Line
-    let pathD = '';
-    dailyData.forEach((d, i) => {
-      const x = padding.left + (i / (dailyData.length - 1)) * chartW;
-      const y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
+    var pathD = '';
+    dailyData.forEach(function(d, i) {
+      var x = padding.left + (i / (dailyData.length - 1)) * chartW;
+      var y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
       pathD += (i === 0 ? 'M' : 'L') + x + ',' + y;
     });
     html += '<path d="' + pathD + '" fill="none" stroke="var(--kimi-chart-1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
 
     // Points with values on peaks and valleys
-    const peaks = [1, 8, 17];
-    const valleys = [2, 9, 16, 23];
+    var peaks = [1, 8, 17];
+    var valleys = [2, 9, 16, 23];
 
-    dailyData.forEach((d, i) => {
-      const x = padding.left + (i / (dailyData.length - 1)) * chartW;
-      const y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
-      const isSpecial = peaks.includes(i) || valleys.includes(i);
+    dailyData.forEach(function(d, i) {
+      var x = padding.left + (i / (dailyData.length - 1)) * chartW;
+      var y = padding.top + chartH - ((d.value - minVal) / (maxVal - minVal)) * chartH;
+      var isSpecial = peaks.indexOf(i) !== -1 || valleys.indexOf(i) !== -1;
       html += '<circle cx="' + x + '" cy="' + y + '" r="' + (isSpecial ? 4 : 2.5) + '" fill="var(--kimi-chart-1)" stroke="var(--kimi-color-surface)" stroke-width="2"/>';
       if (isSpecial) {
         html += '<text x="' + x + '" y="' + (y - 10) + '" text-anchor="middle" font-size="10" fill="var(--kimi-color-text-secondary)" font-weight="500">' + (d.value/1000).toFixed(1) + 'k</text>';
@@ -552,30 +555,30 @@
   }
 
   function drawHeatmap() {
-    const svg = document.getElementById('heatmap-chart');
+    var svg = document.getElementById('heatmap-chart');
     if (!svg) return;
-    const w = 900, h = 180;
-    const cols = 5;
-    const rows = 5;
-    const cellW = (w - 60) / cols;
-    const cellH = (h - 40) / rows;
+    var w = 900, h = 180;
+    var cols = 5;
+    var rows = 5;
+    var cellW = (w - 60) / cols;
+    var cellH = (h - 40) / rows;
 
-    const maxDod = Math.max(...dailyData.map(d => Math.abs(d.dod)));
+    var maxDod = Math.max.apply(null, dailyData.map(function(d) { return Math.abs(d.dod); }));
 
-    let html = '';
+    var html = '';
 
     // Day labels top
-    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].forEach((day, i) => {
+    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].forEach(function(day, i) {
       html += '<text x="' + (40 + i * cellW + cellW/2) + '" y="18" text-anchor="middle" font-size="11" fill="var(--kimi-color-text-quaternary)">' + day + '</text>';
     });
 
     // Week labels left
-    ['W1', 'W2', 'W3', 'W4', 'W5'].forEach((week, i) => {
+    ['W1', 'W2', 'W3', 'W4', 'W5'].forEach(function(week, i) {
       html += '<text x="20" y="' + (35 + i * cellH + cellH/2 + 4) + '" text-anchor="middle" font-size="11" fill="var(--kimi-color-text-quaternary)">' + week + '</text>';
     });
 
     // Heatmap cells
-    const weekMap = [
+    var weekMap = [
       [null, null, dailyData[0], dailyData[1], dailyData[2]],
       [dailyData[3], dailyData[4], dailyData[5], dailyData[6], dailyData[7]],
       [dailyData[8], dailyData[9], dailyData[10], dailyData[11], dailyData[12]],
@@ -583,17 +586,17 @@
       [dailyData[18], dailyData[19], dailyData[20], dailyData[21], dailyData[22]],
     ];
 
-    weekMap.forEach((week, wi) => {
-      week.forEach((d, di) => {
+    weekMap.forEach(function(week, wi) {
+      week.forEach(function(d, di) {
         if (!d) return;
-        const x = 40 + di * cellW + 2;
-        const y = 30 + wi * cellH + 2;
-        const intensity = Math.abs(d.dod) / maxDod;
-        const r = d.dod >= 0 ? 67 : 229;
-        const g = d.dod >= 0 ? 160 : 57;
-        const b = d.dod >= 0 ? 71 : 53;
-        const alpha = intensity * 0.8 + 0.2;
-        const color = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        var x = 40 + di * cellW + 2;
+        var y = 30 + wi * cellH + 2;
+        var intensity = Math.abs(d.dod) / maxDod;
+        var r = d.dod >= 0 ? 67 : 229;
+        var g = d.dod >= 0 ? 160 : 57;
+        var b = d.dod >= 0 ? 71 : 53;
+        var alpha = intensity * 0.8 + 0.2;
+        var color = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
         html += '<rect x="' + x + '" y="' + y + '" width="' + (cellW - 4) + '" height="' + (cellH - 4) + '" rx="4" fill="' + color + '"/>';
         html += '<text x="' + (x + (cellW-4)/2) + '" y="' + (y + (cellH-4)/2 + 4) + '" text-anchor="middle" font-size="11" fill="var(--kimi-color-text-primary)" font-weight="500">' + (d.dod > 0 ? '+' : '') + d.dod + '</text>';
       });
@@ -603,9 +606,11 @@
   }
 
   function switchTab(tabName, btn) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    var tabs = document.querySelectorAll('.tab-content');
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.add('hidden');
     document.getElementById('tab-' + tabName).classList.remove('hidden');
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    var btns = document.querySelectorAll('.tab');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
     btn.classList.add('active');
 
     if (tabName === 'trend') {
@@ -617,14 +622,17 @@
   }
 
   function filterKAM(kam, btn) {
-    document.querySelectorAll('.kam-chip').forEach(c => c.classList.remove('active'));
+    var chips = document.querySelectorAll('.kam-chip');
+    for (var i = 0; i < chips.length; i++) chips[i].classList.remove('active');
     btn.classList.add('active');
   }
 
-  // Initialize charts
-  drawLineChart('trend-chart', dailyData, true);
-  drawBarChart('wow-chart', dailyData);
-  drawKAMChart();
+  // Initialize charts on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    drawLineChart('trend-chart', dailyData, true);
+    drawBarChart('wow-chart', dailyData);
+    drawKAMChart();
+  });
 </script>
 
 </body>
